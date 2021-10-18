@@ -30,7 +30,7 @@ dplyr::select(ht_meters, SEX)%>%
                                       `2` = 'Female')) %>%
   drop_na()
 ```
-#Created a new data set for males in order to find the median height for males only
+#Created a new data set for males in order to find the median and mean height for males only
 ```{r}
 BRFSS_male <- BRFSS2017_10percent_v %>%
 dplyr::select(ht_meters, SEX)%>%
@@ -41,8 +41,9 @@ dplyr::select(ht_meters, SEX)%>%
   filter (SEX==1) %>%
   drop_na()
 median(BRFSS_male$ht_meters)
+mean(BRFSS_male$ht_meters)
 ```
-#Created a new data set for females in order to find the median height for females only
+#Created a new data set for females in order to find the median and mean height for females only
 ```{r}
 BRFSS_female <- BRFSS2017_10percent_v %>%
 dplyr::select(ht_meters, SEX)%>%
@@ -53,6 +54,7 @@ dplyr::select(ht_meters, SEX)%>%
   filter (SEX==2) %>%
   drop_na()
 median(BRFSS_female$ht_meters)
+mean(BRFSS_female$ht_meters)
 ```
 #Created a boxplot in order to illustrate the difference in median height by sex
 ```{r}
