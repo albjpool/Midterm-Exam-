@@ -1,0 +1,74 @@
+---
+title: "Albert Pool-Midterm Exam"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+#Imported the BRFSS2017_10percent_v data into R
+library(readr)
+BRFSS2017_10percent_v <- read_csv("C:/Users/albjp/OneDrive/Desktop/BRFSS2017_10percent_v.csv")
+#Loaded tidyverse, descr, and dplyr to do statistical analyses
+library (package="tidyverse")
+library (package = "descr")
+library (package = "dplyr")
+#Created a new data set that only includes the variables of interest, ht_meters and SEX
+BRFSS_reduced<-BRFSS2017_10percent_v%>%
+dplyr::select(ht_meters, SEX)%>%
+  #Converted ht_meters into a numeric variable and dropped missing values
+  mutate(ht_meters=as.numeric(ht_meters)) %>%
+  mutate(ht_meters = na_if(x = ht_meters, y = 'NA')) %>%
+  #Converted SEX into a numeric variable and dropped missing values
+  mutate(SEX=as.numeric(SEX))%>%
+  mutate(SEX=na_if(x = SEX, y = 9)) %>%
+  #Recoded SEX to include Male and Female as observations rather than 1 and 2.
+  mutate(SEX = recode_factor(.x = SEX, 
+                                      `1` = 'Male',
+                                      `2` = 'Female')) %>%
+  drop_na()
+```
+#Created a new data set for males in order to find the median height for males only
+```{r}
+BRFSS_male <- BRFSS2017_10percent_v %>%
+dplyr::select(ht_meters, SEX)%>%
+  mutate(ht_meters=as.numeric(ht_meters)) %>%
+  mutate(ht_meters = na_if(x = ht_meters, y = 'NA')) %>%
+  mutate(SEX=as.numeric(SEX))%>%
+  mutate(SEX=na_if(x = SEX, y = 9)) %>%
+  filter (SEX==1) %>%
+  drop_na()
+median(BRFSS_male$ht_meters)
+```
+#Created a new data set for females in order to find the median height for females only
+```{r}
+BRFSS_female <- BRFSS2017_10percent_v %>%
+dplyr::select(ht_meters, SEX)%>%
+  mutate(ht_meters=as.numeric(ht_meters)) %>%
+  mutate(ht_meters = na_if(x = ht_meters, y = 'NA')) %>%
+  mutate(SEX=as.factor(SEX))%>%
+  mutate(SEX=na_if(x = SEX, y = 9)) %>%
+  filter (SEX==2) %>%
+  drop_na()
+median(BRFSS_female$ht_meters)
+```
+#Created a boxplot in order to illustrate the difference in median height by sex
+```{r}
+library(ggplot2)
+library(haven)
+BRFSS_reduced %>%
+  ggplot(aes(x=SEX, y= ht_meters, group=SEX)) +    
+  geom_boxplot(aes(fill=SEX)) +
+  ggtitle ("Median Height (meters) of Males vs. Females") +
+  xlab ("Sex") +
+  ylab ("Median Height (meters)") +
+  scale_fill_manual (values = c("blue", "orange")) +
+  theme_minimal()
+```
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
